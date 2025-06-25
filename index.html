@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老年认知训练 - 色彩识别游戏</title>
+    <script src="https://cdn.tailwindcss.com/3.3.3"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #f8f4e9;
+            color: #4a4a4a;
+            font-size: 18px;
+        }
+        
+        .elderly-card {
+            background-color: #fff9f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8d9b5;
+            transition: all 0.3s ease;
+        }
+        
+        .elderly-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .elderly-btn {
+            background-color: #8db596;
+            color: white;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 18px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .elderly-btn:hover {
+            background-color: #7aa384;
+            transform: scale(1.05);
+        }
+        
+        .elderly-primary {
+            color: #5a7247;
+        }
+        
+        .elderly-secondary {
+            color: #8db596;
+        }
+        
+        .elderly-highlight {
+            background-color: rgba(141, 181, 150, 0.2);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        
+        .game-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #8db596;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-right: 16px;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background-color: #e8d9b5;
+            border-radius: 6px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #8db596;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+        
+        .game-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 2px solid #e8d9b5;
+        }
+        
+        .match-card {
+            width: 120px;
+            height: 120px;
+            background-color: #fff9f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e8d9b5;
+            font-size: 24px;
+        }
+        
+        .match-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .match-card.selected {
+            border-color: #8db596;
+            background-color: rgba(141, 181, 150, 0.1);
+        }
+        
+        .match-card.matched {
+            border-color: #5a7247;
+            background-color: rgba(90, 114, 71, 0.1);
+        }
+        
+        .number-input {
+            width: 80px;
+            height: 60px;
+            font-size: 24px;
+            text-align: center;
+            border: 2px solid #e8d9b5;
+            border-radius: 12px;
+            background-color: #fff9f0;
+        }
+        
+        .color-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-option.selected {
+            border-color: #5a7247;
+            box-shadow: 0 0 0 3px rgba(90, 114, 71, 0.3);
+        }
+        
+        /* 增加图片间距 */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        
+        .memory-card {
+            width: 100%;
+            height: 165px;
+            background-color: #fff9f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e8d9b5;
+            font-size: 24px;
+        }
+        
+        .memory-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .memory-card.flipped {
+            background-color: #8db596;
+            color: white;
+        }
+        
+        .memory-card.matched {
+            background-color: #5a7247;
+            color: white;
+        }
+        
+        .reward-badge {
+            width: 50px;
+            height: 50px;
+            background-color: #8db596;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin-right: 12px;
+        }
+        
+        /* 修改图片大小和裁切 */
+        .front-face img {
+            width: 165px;
+            height: 165px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .memory-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .match-card {
+                width: 80px;
+                height: 80px;
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md py-4 px-6 sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-brain text-3xl elderly-primary mr-3"></i>
+                <h1 class="text-2xl font-bold elderly-primary">老年认知训练</h1>
+            </div>
+            <div class="flex items-center">
+                <div class="mr-6">
+                    <span class="text-lg elderly-primary">欢迎, </span>
+                    <span class="text-lg font-semibold elderly-secondary">张爷爷</span>
+                </div>
+                <div class="flex items-center">
+                    <div class="reward-badge">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="text-xl font-bold elderly-primary">125</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto py-8 px-4">
+        <!-- 进度和关卡 -->
+        <div class="elderly-card p-6 mb-8">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold elderly-primary">您的训练进度</h2>
+                <div class="text-xl elderly-secondary">
+                    <span class="font-bold">第</span>
+                    <span class="font-bold mx-2">3</span>
+                    <span class="font-bold">关</span>
+                </div>
+            </div>
+            <div class="progress-bar mb-2">
+                <div class="progress-fill" style="width: 45%">
+                </div>
+            </div>
+            <div class="flex justify-between text-lg">
+                <span class="elderly-primary">已完成: 45%</span>
+                <span class="elderly-secondary">下一关奖励: 30积分</span>
+            </div>
+        </div>
+
+        <!-- 游戏选择 -->
+        <h2 class="text-2xl font-bold elderly-primary mb-6">选择训练游戏</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- 色彩识别游戏 -->
+            <div class="elderly-card p-6">
+                <div class="flex items-center mb-4">
+                    <div class="game-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3 class="text-xl font-bold elderly-primary">色彩识别游戏</h3>
+                </div>
+                <img src="https://s.coze.cn/t/OuxNvXdosTE/" alt="色彩识别游戏" class="game-image mb-4">
+                <p class="text-gray-600 mb-4">根据提示选择正确的颜色，训练色彩辨别能力。</p>
+                <button class="elderly-btn w-full" onclick="startColorRecognitionGame()">
+                    <i class="fas fa-play mr-2"></i>开始游戏
+                </button>
+            </div>
+        </div>
+
+        <!-- 色彩识别游戏区域 -->
+        <div id="colorRecognitionGameArea" class="elderly-card p-6 hidden">
+            <h3 class="text-2xl font-bold elderly-primary mb-6">色彩识别游戏</h3>
+            <div id="colorPrompt" class="text-xl mb-4">请选择与提示颜色相同的色块</div>
+            <div id="colorOptions" class="flex flex-wrap justify-center gap-4"></div>
+            <button class="elderly-btn mt-8" onclick="resetColorRecognitionGame()">重置游戏</button>
+        </div>
+    </main>
+    <script>
+        // 定义颜色数组（中文）
+        const colors = [
+            '红色', '蓝色', '绿色', '黄色', '橙色', '紫色'
+        ]; 
+        // 记录当前提示的颜色
+        let currentColor;
+        // 记录游戏是否结束
+        let gameOver = false;
+
+        // 开始色彩识别游戏
+        function startColorRecognitionGame() {
+            const colorRecognitionGameArea = document.getElementById('colorRecognitionGameArea');
+            colorRecognitionGameArea.classList.remove('hidden');
+            resetColorRecognitionGame();
+        }
+
+        // 重置色彩识别游戏
+        function resetColorRecognitionGame() {
+            const colorOptions = document.getElementById('colorOptions');
+            colorOptions.innerHTML = '';
+            gameOver = false;
+            // 随机选择一个颜色作为提示
+            currentColor = colors[Math.floor(Math.random() * colors.length)];
+            document.getElementById('colorPrompt').textContent = `请选择 ${currentColor} 颜色的色块`;
+            // 定义颜色英文与中文的映射
+            const colorMap = {
+                '红色': 'red',
+                '蓝色': 'blue',
+                '绿色': 'green',
+                '黄色': 'yellow',
+                '橙色': 'orange',
+                '紫色': 'purple'
+            };
+            // 打乱颜色数组
+            const shuffledColors = [...colors].sort(() => 0.5 - Math.random());
+            shuffledColors.forEach(color => {
+                const colorOption = document.createElement('div');
+                colorOption.classList.add('color-option');
+                colorOption.style.backgroundColor = colorMap[color];
+                colorOption.addEventListener('click', () => checkColorSelection(color));
+                colorOptions.appendChild(colorOption);
+            });
+        }
+
+        // 检查颜色选择
+        function checkColorSelection(selectedColor) {
+            if (gameOver) return;
+            if (selectedColor === currentColor) {
+                alert('恭喜你，选择正确！');
+                resetColorRecognitionGame();
+            } else {
+                alert('选择错误，请重新尝试。');
+            }
+        }
+    </script>
+</body>
+</html>
